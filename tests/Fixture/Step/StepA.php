@@ -3,8 +3,8 @@
 
 namespace SortableTasks\Fixture\Step;
 
-
 use SortableTasks\Fixture\Model\Step;
+
 /**
  * StepA has no dependencies
  *
