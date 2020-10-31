@@ -154,7 +154,7 @@ $iterator = new SortableTasksIterator();
 
 // Notice that it doesn't matter in what order we add the steps; they will get sorted at runtime
 $iterator->add(new BuildContainerStep());
-$iterator->add(new CheckDbConnectionStep())
+$iterator->add(new CheckDbConnectionStep());
 $iterator->add(new CheckConfigStep());
 
 // Tasks are sorted upon calling the iterator
