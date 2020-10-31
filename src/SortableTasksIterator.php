@@ -40,7 +40,7 @@ class SortableTasksIterator implements IteratorAggregate, Countable
     /**
      * @var array|SortableTask[]
      */
-    private array $tasks = [];
+    protected array $tasks = [];
 
     /**
      * @var array|array[]  Each sub-array is an array of strings
