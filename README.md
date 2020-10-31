@@ -9,7 +9,8 @@
 
 A simple, un-opinionated abstraction library to allow for the ordering of tasks.  Features:
 
-* Useful for libraries like setup algorithms, middleware layer ordering, and other libraries where the ordering of tasks
+* Tasks are service class instances that can define other tasks as dependencies
+* Useful for libraries like setup routines, middleware layer ordering, and other libraries where the ordering of tasks
   is determined in an arbitrary order, but need to be run in a deterministic one
 * Builds on the [`marcj/topsort` library](https://packagist.org/packages/marcj/topsort) to enable sorting of tasks, each defined in their own class
 * Un-opinionated about how tasks actually run; just concerned with sorting them based on their dependency and running them in-order
@@ -32,7 +33,7 @@ $ composer require caseyamcl/sortable-tasks
 
 ## Usage
 
-TODO: This.
+Refer to the `tests/Fixture` directory for an example 
 
 ## Change log
 

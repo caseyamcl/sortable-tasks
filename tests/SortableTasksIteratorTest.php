@@ -7,15 +7,15 @@ use MJS\TopSort\CircularDependencyException;
 use MJS\TopSort\ElementNotFoundException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use SortableTasks\Fixture\Model\StepInput;
-use SortableTasks\Fixture\Model\StepReport;
-use SortableTasks\Fixture\Step\StepA;
-use SortableTasks\Fixture\Step\StepB;
-use SortableTasks\Fixture\Step\StepC;
-use SortableTasks\Fixture\Step\StepD;
-use SortableTasks\Fixture\Step\StepE;
-use SortableTasks\Fixture\Step\StepF;
-use SortableTasks\Fixture\Step\StepThrowsException;
+use SortableTasks\Fixture\Model\TaskInput;
+use SortableTasks\Fixture\Model\TaskReport;
+use SortableTasks\Fixture\Task\TaskA;
+use SortableTasks\Fixture\Task\TaskB;
+use SortableTasks\Fixture\Task\TaskC;
+use SortableTasks\Fixture\Task\TaskD;
+use SortableTasks\Fixture\Task\TaskE;
+use SortableTasks\Fixture\Task\TaskF;
+use SortableTasks\Fixture\Task\TaskThrowsException;
 use SortableTasks\Fixture\TaskRunner;
 
 /**
@@ -33,34 +33,34 @@ class SortableTasksIteratorTest extends TestCase
     public function testBasicDependencies(): void
     {
         $sorter = new SortableTasksIterator();
-        $sorter->add(new StepA());
-        $sorter->add(new StepB());
-        $sorter->add(new StepC());
+        $sorter->add(new TaskA());
+        $sorter->add(new TaskB());
+        $sorter->add(new TaskC());
         $this->assertSame(['A', 'C', 'B'], $this->processTasks($sorter->sort()));
     }
 
     public function testTwoWayDependency(): void
     {
         $sorter = new SortableTasksIterator();
-        $sorter->add(new StepA());
-        $sorter->add(new StepB()); // depends: "A"
-        $sorter->add(new StepC()); // depends: "A"; before "B"
-        $sorter->add(new StepD()); // depends: "A"; before: "B" & "C"
+        $sorter->add(new TaskA());
+        $sorter->add(new TaskB()); // depends: "A"
+        $sorter->add(new TaskC()); // depends: "A"; before "B"
+        $sorter->add(new TaskD()); // depends: "A"; before: "B" & "C"
 
         $this->assertSame(['A', 'D', 'C', 'B'], $this->processTasks($sorter->sort()));
     }
 
     public function testBuildInstantiator(): void
     {
-        $iterator = SortableTasksIterator::build(new StepA(), new StepB(), new StepC());
+        $iterator = SortableTasksIterator::build(new TaskA(), new TaskB(), new TaskC());
         $this->assertSame(['A', 'C', 'B'], $this->processTasks($iterator->sort()));
     }
 
     public function testCount(): void
     {
         $sorter = new SortableTasksIterator();
-        $sorter->add(new StepA());
-        $sorter->add(new StepB());
+        $sorter->add(new TaskA());
+        $sorter->add(new TaskB());
         $this->assertSame(2, $sorter->count());
     }
 
@@ -77,18 +77,18 @@ class SortableTasksIteratorTest extends TestCase
         $this->expectExceptionMessage('Circular dependency found:');
 
         $sorter = new SortableTasksIterator();
-        $sorter->add(new StepE());
-        $sorter->add(new StepF());
+        $sorter->add(new TaskE());
+        $sorter->add(new TaskF());
         $this->processTasks($sorter);
     }
 
     public function testElementNotFoundThrowsException(): void
     {
         $this->expectException(ElementNotFoundException::class);
-        $this->expectExceptionMessage(StepA::class);
+        $this->expectExceptionMessage(TaskA::class);
 
         $sorter = new SortableTasksIterator();
-        $sorter->add(new StepB());
+        $sorter->add(new TaskB());
 
         /** @noinspection PhpParamsInspection */
         iterator_apply($sorter->getIterator(), fn ($v) => $v);
@@ -100,26 +100,26 @@ class SortableTasksIteratorTest extends TestCase
         $this->expectExceptionMessage('error occurred during processing');
 
         $sorter = new SortableTasksIterator();
-        $sorter->add(new StepA());
-        $sorter->add(new StepThrowsException());
+        $sorter->add(new TaskA());
+        $sorter->add(new TaskThrowsException());
         $this->processTasks($sorter);
     }
 
     public function testStepWithInput()
     {
-        $sorter = SortableTasksIterator::build(new StepA(), new StepB());
+        $sorter = SortableTasksIterator::build(new TaskA(), new TaskB());
 
-        foreach (TaskRunner::runTasks($sorter, new StepInput(['a' => 'A'])) as $stepResult) {
+        foreach (TaskRunner::runTasks($sorter, new TaskInput(['a' => 'A'])) as $stepResult) {
             $this->assertEquals(['a' => 'A'], $stepResult->getParams()->getValue());
         }
     }
 
     /**
      * @param iterable $taskSortResult
-     * @param StepInput|null $input
-     * @return array|StepReport[]
+     * @param TaskInput|null $input
+     * @return array|TaskReport[]
      */
-    private function processTasks(iterable $taskSortResult, ?StepInput $input = null): array
+    private function processTasks(iterable $taskSortResult, ?TaskInput $input = null): array
     {
         $items = TaskRunner::runTasks($taskSortResult, $input);
 

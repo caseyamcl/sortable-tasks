@@ -2,13 +2,13 @@
 
 namespace SortableTasks\Fixture;
 
-use SortableTasks\Fixture\Model\StepInput;
+use SortableTasks\Fixture\Model\TaskInput;
 
 class TaskRunner
 {
-    public static function runTasks(iterable $tasks, ?StepInput $input = null): iterable
+    public static function runTasks(iterable $tasks, ?TaskInput $input = null): iterable
     {
-        $input = $input ?: new StepInput(['a' => 'B']);
+        $input = $input ?: new TaskInput(['a' => 'B']);
 
         foreach ($tasks as $taskName => $task) {
             yield $taskName => $task->__invoke($input);

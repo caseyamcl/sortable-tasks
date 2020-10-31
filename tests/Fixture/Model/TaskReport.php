@@ -6,16 +6,16 @@ namespace SortableTasks\Fixture\Model;
 /**
  * Class StepReport
  */
-class StepReport
+class TaskReport
 {
     private string $reportMessage;
 
     /**
-     * @var StepInput|null
+     * @var TaskInput|null
      */
-    private ?StepInput $params;
+    private ?TaskInput $params;
 
-    public function __construct(string $reportMessage, ?StepInput $params = null)
+    public function __construct(string $reportMessage, ?TaskInput $params = null)
     {
         $this->reportMessage = $reportMessage;
         $this->params = $params;
@@ -30,9 +30,9 @@ class StepReport
     }
 
     /**
-     * @return StepInput|null
+     * @return TaskInput|null
      */
-    public function getParams(): ?StepInput
+    public function getParams(): ?TaskInput
     {
         return $this->params;
     }

@@ -7,7 +7,7 @@ namespace SortableTasks\Fixture\Model;
  * Class StepInput
  * @package SortableTasks\Fixture\Model
  */
-class StepInput
+class TaskInput
 {
     private array $params;
 

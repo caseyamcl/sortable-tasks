@@ -1,16 +1,16 @@
 <?php
 
 
-namespace SortableTasks\Fixture\Step;
+namespace SortableTasks\Fixture\Task;
 
-use SortableTasks\Fixture\Model\Step;
+use SortableTasks\Fixture\Model\Task;
 
 /**
  * StepA has no dependencies
  *
  * @author Casey McLaughlin <me@caseymclaughlin.com>
  */
-class StepA extends Step
+class TaskA extends Task
 {
     // pass..
 }

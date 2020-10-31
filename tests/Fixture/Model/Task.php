@@ -8,7 +8,7 @@ use SortableTasks\SortableTask;
 /**
  * Class Step
  */
-abstract class Step implements SortableTask
+abstract class Task implements SortableTask
 {
     public static function dependsOn(): iterable
     {
@@ -21,9 +21,9 @@ abstract class Step implements SortableTask
     }
 
 
-    public function __invoke(StepInput $input): StepReport
+    public function __invoke(TaskInput $input): TaskReport
     {
         $stepName = static::class;
-        return new StepReport("Ran step $stepName", $input);
+        return new TaskReport("Ran step $stepName", $input);
     }
 }

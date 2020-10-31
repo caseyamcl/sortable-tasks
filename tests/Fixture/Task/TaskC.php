@@ -1,23 +1,23 @@
 <?php
 
 
-namespace SortableTasks\Fixture\Step;
+namespace SortableTasks\Fixture\Task;
 
-use SortableTasks\Fixture\Model\Step;
+use SortableTasks\Fixture\Model\Task;
 
 /**
  * StepC depends on StepA, and must run before StepB
  *
  * @author Casey McLaughlin <me@caseymclaughlin.com>
  */
-class StepC extends Step
+class TaskC extends Task
 {
     /**
      * @inheritDoc
      */
     public static function dependsOn(): iterable
     {
-        return [StepA::class];
+        return [TaskA::class];
     }
 
     /**
@@ -25,6 +25,6 @@ class StepC extends Step
      */
     public static function mustRunBefore(): iterable
     {
-        return [StepB::class];
+        return [TaskB::class];
     }
 }

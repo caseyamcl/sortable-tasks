@@ -1,19 +1,19 @@
 <?php
 
 
-namespace SortableTasks\Fixture\Step;
+namespace SortableTasks\Fixture\Task;
 
-use SortableTasks\Fixture\Model\Step;
+use SortableTasks\Fixture\Model\Task;
 
 /**
  * Step E depends on Step F, which depends on Step E, thereby creating a dependency loop
  *
  * @author Casey McLaughlin <caseyamcl@gmail.com>
  */
-class StepE extends Step
+class TaskE extends Task
 {
     public static function dependsOn(): iterable
     {
-        return [StepF::class];
+        return [TaskF::class];
     }
 }

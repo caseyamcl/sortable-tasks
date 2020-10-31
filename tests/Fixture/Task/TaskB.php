@@ -1,20 +1,20 @@
 <?php
 
 
-namespace SortableTasks\Fixture\Step;
+namespace SortableTasks\Fixture\Task;
 
-use SortableTasks\Fixture\Model\Step;
+use SortableTasks\Fixture\Model\Task;
 
 /**
  * StepB depends on StepA
  *
  * @author Casey McLaughlin <me@caseymclaughlin.com>
  */
-class StepB extends Step
+class TaskB extends Task
 {
 
     public static function dependsOn(): iterable
     {
-        return [StepA::class];
+        return [TaskA::class];
     }
 }

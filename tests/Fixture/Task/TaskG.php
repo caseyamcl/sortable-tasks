@@ -1,16 +1,16 @@
 <?php
 
 
-namespace SortableTasks\Fixture\Step;
+namespace SortableTasks\Fixture\Task;
 
-use SortableTasks\Fixture\Model\Step;
+use SortableTasks\Fixture\Model\Task;
 
 /**
  * Step G depends on a non-existent element
  *
  * @author Casey McLaughlin <me@caseymclaughlin.com>
  */
-class StepG extends Step
+class TaskG extends Task
 {
     public static function dependsOn(): iterable
     {
