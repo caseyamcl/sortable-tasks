@@ -7,10 +7,20 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-A simple, un-opinionated abstraction library to allow for the ordering of tasks.  
+A simple, un-opinionated abstraction library to allow for the ordering of tasks.  Features:
+
+* Useful for libraries like setup algorithms, middleware layer ordering, and other libraries where the ordering of tasks
+  is determined in an arbitrary order, but need to be run in a deterministic one
+* Builds on the [`marcj/topsort` library](https://packagist.org/packages/marcj/topsort) to enable sorting of tasks, each defined in their own class
+* Un-opinionated about how tasks actually run; just concerned with sorting them based on their dependency and running them in-order
+* PSR-4 and PSR-12 compliant
 
 ## Structure
 
+This library only contains two files:
+
+| `SortableTask.php`          | Interface for a task; contains two methods to define dependencies, `depeondsOn` and `mustRunBefore` |
+| `SortableTasksIterator.php` | Iterator class that does the sorting and other work; implements `Iterable` and `Countable`          |
 
 ## Install
 
@@ -22,10 +32,7 @@ $ composer require caseyamcl/sortable-tasks
 
 ## Usage
 
-``` php
-$skeleton = new SortableTasks();
-echo $skeleton->echoPhrase('Hello, League!');
-```
+TODO: This.
 
 ## Change log
 
@@ -39,7 +46,7 @@ $ composer test
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md) for details.
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
