@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SortableTasks;
 
 /**
- * Class SortableTaskIterator
+ * Sortable task - implement this interface to make your task sortable, and use the SortableTasksIterator to do the work
  *
- * @package SortableTasks
+ * @author Casey McLaughlin <me@caseymclaughlin.com>
  */
 interface SortableTask
 {

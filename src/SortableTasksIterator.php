@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SortableTasks;
 
 use ArrayIterator;
@@ -11,9 +13,9 @@ use MJS\TopSort\Implementations\StringSort;
 use MJS\TopSort\TopSortInterface;
 
 /**
- * Default implementation of
+ * Sortable tasks iterator - this class does the work to make `SortableTask` instances
  *
- * @package SortableTasks
+ * @author Casey McLaughlin <me@caseymclaughlin.com>
  */
 class SortableTasksIterator implements IteratorAggregate, Countable
 {
