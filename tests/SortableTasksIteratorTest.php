@@ -32,6 +32,7 @@ use SortableTasks\Fixture\Task\TaskC;
 use SortableTasks\Fixture\Task\TaskD;
 use SortableTasks\Fixture\Task\TaskE;
 use SortableTasks\Fixture\Task\TaskF;
+use SortableTasks\Fixture\Task\TaskH;
 use SortableTasks\Fixture\Task\TaskThrowsException;
 use SortableTasks\Fixture\TaskRunner;
 
@@ -129,6 +130,12 @@ class SortableTasksIteratorTest extends TestCase
         foreach (TaskRunner::runTasks($sorter, new TaskInput(['a' => 'A'])) as $stepResult) {
             $this->assertEquals(['a' => 'A'], $stepResult->getParams()->getValue());
         }
+    }
+
+    public function testTaskThatUsesGeneratorToDefineDependencies(): void
+    {
+        $sorter = SortableTasksIterator::build(new TaskH(), new TaskA(), new TaskB(), new TaskC(), new TaskD());
+        $this->assertEquals(['A', 'D', 'C', 'B', 'H'], $this->processTasks($sorter));
     }
 
     /**

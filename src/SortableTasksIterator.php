@@ -26,6 +26,7 @@ use MJS\TopSort\CircularDependencyException;
 use MJS\TopSort\ElementNotFoundException;
 use MJS\TopSort\Implementations\StringSort;
 use MJS\TopSort\TopSortInterface;
+use Traversable;
 
 /**
  * Sortable tasks iterator - this class does the work to make `SortableTask` instances
@@ -74,8 +75,9 @@ class SortableTasksIterator implements IteratorAggregate, Countable
         $taskName = get_class($task);
         $this->tasks[$taskName] = $task;
 
-        if (! empty($task::mustRunBefore())) {
-            foreach ($task::mustRunBefore() as $depName) {
+        $mustRunBefore = $this->realize($task::mustRunBefore());
+        if (! empty($mustRunBefore)) {
+            foreach ($mustRunBefore as $depName) {
                 $this->extraDependencies[$depName][] = $taskName;
             }
         }
@@ -86,7 +88,7 @@ class SortableTasksIterator implements IteratorAggregate, Countable
         $sorter = clone $this->sorter;
 
         foreach ($this->tasks as $taskClassName => $step) {
-            $dependencies = $step::dependsOn();
+            $dependencies = $this->realize($step::dependsOn());
 
             // fancy logic here...
             if (isset($this->extraDependencies[$taskClassName])) {
@@ -114,5 +116,18 @@ class SortableTasksIterator implements IteratorAggregate, Countable
     public function count(): int
     {
         return count($this->tasks);
+    }
+
+    /**
+     * @param iterable $items
+     * @return array
+     */
+    private function realize(iterable $items): array
+    {
+        if ($items instanceof Traversable) {
+            return iterator_to_array($items);
+        } else {
+            return (array) $items;
+        }
     }
 }
