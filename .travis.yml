@@ -2,10 +2,8 @@ dist: trusty
 language: php
 
 php:
-  - 7.2
-  - 7.3
   - 7.4
-  - hhvm
+  - 8.0
 
 ## Cache composer
 cache:
@@ -14,14 +12,14 @@ cache:
 
 matrix:
   include:
-    - php: 7.2
+    - php: 7.4
       env: 'COMPOSER_FLAGS="--prefer-stable --prefer-lowest"'
 
 before_script:
   - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction --prefer-dist
 
 script:
-  - vendor/bin/phpcs --standard=psr2 src/
+  - vendor/bin/phpcs --standard=psr12 src/
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 after_script:
