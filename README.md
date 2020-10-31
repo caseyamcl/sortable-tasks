@@ -10,8 +10,8 @@
 A simple, un-opinionated abstraction library to allow for the ordering of tasks.  Features:
 
 * Tasks are service class instances that can define other tasks as dependencies
-* Useful for libraries like setup routines, middleware layer ordering, and other libraries where the ordering of tasks
-  is determined in an arbitrary order, but need to be run in a deterministic one
+* Useful for libraries like setup routines, ensuring that HTTP middleware runs in-order, and other libraries where the ordering of tasks
+  is determined in an arbitrary order, but need to be run deterministically
 * Builds on the [`marcj/topsort` library](https://packagist.org/packages/marcj/topsort) to enable sorting of tasks, each defined in their own class
 * Un-opinionated about how tasks actually run; just concerned with sorting them based on their dependency and running them in-order
 * PSR-4 and PSR-12 compliant
@@ -33,7 +33,147 @@ $ composer require caseyamcl/sortable-tasks
 
 ## Usage
 
-Refer to the `tests/Fixture` directory for an example 
+> Refer to the `tests/Fixture` directory for a fully functional example.
+
+The best way to demonstrate this library is with an example, so we'll use a setup application.  In our hypothetical
+application, setup tasks can be registered in any order, but they will run in a particular order based on a set of
+explicitly defined dependencies.
+
+First, we must define a class that implements the `SortableTask` interface:
+
+```php
+
+use SortableTasks\SortableTask;
+
+abstract class SetupStep implements SortableTask
+{
+    abstract public function __invoke(): bool;
+}
+ 
+``` 
+
+Notice that we do not implement the `dependsOn()` and `mustRunBefore()` methods in the abstract `SetupStep` class. This
+means that each concrete implementation step must define its dependencies. This is optional, and is up to the library
+that implements SortableTasks.
+
+If most steps do not require ordering, then we could do the following:
+
+```php
+
+use SortableTasks\SortableTask;
+
+abstract class SetupStep implements SortableTask
+{
+    abstract public function __invoke(): bool;
+
+    // Provide default implementations of `dependsOn` and `mustRunBefore` that return empty arrays
+    public static function dependsOn() : iterable
+    {
+        return [];
+    }
+    public static function mustRunBefore() : iterable
+    {
+        return [];
+    }
+}
+```
+
+Let's create some setup steps now:
+
+```php
+
+class CheckConfigStep extends SetupStep
+{
+    public static function dependsOn(): iterable
+    {
+       return []; // depends on nothing; can run anytime in the order of operations
+    }
+    
+    public function __invoke(): bool
+    {
+        // do stuff, then..
+        return true;
+    }
+}
+
+class CheckDbConnectionStep extends SetupStep
+{
+    private DbConnector $dbConnector;
+    
+    public function __construct(DbConnector $dbConnector)
+    {    
+        $this->dbConnector = $dbConnector;
+    }
+
+    public static function dependsOn(): iterable
+    {
+        return [CheckConfigStep::class];
+    }
+
+    public static function mustRunBefore(): iterable
+    {
+        return [BuildContainerStep::class];
+    }
+
+    public function __invoke(): bool
+    {
+        // do stuff, then..
+        return $this->dbConnector->checkConnection();
+    }
+}
+
+class BuildContainerStep extends SetupStep
+{
+    private ContainerBuilder $containerBuilder;
+
+    public function __construct(ContainerBuilder $containerBuilder)
+    {
+        $this->containerBuilder = $containerBuilder;
+    }
+
+    public static function dependsOn(): iterable
+    {
+        return [CheckConfigStep::class, CheckDbConnection::class];
+    }
+
+    public function __invoke(): bool
+    {
+        // do stuff, then..
+        return $this->containerBuilder->buildContainer();
+    }
+}
+
+```
+
+Now that we have some concrete classes, let's add them to a SortableTasksIterator:
+
+```php
+use SortableTasks\SortableTasksIterator;
+
+$iterator = new SortableTasksIterator();
+
+// Notice that it doesn't matter in what order we add the steps; they will get sorted at runtime
+$iterator->add(new BuildContainerStep());
+$iterator->add(new CheckDbConnectionStep())
+$iterator->add(new CheckConfigStep());
+
+// Tasks are sorted upon calling the iterator
+// Class names are the keys
+foreach ($iterator as $setupStepClassName => $setupStep) {
+    if (! $setupStep()->__invoke()) {
+        throw new SetupFailedException('Setup failed on step: ' . $setupStepClassName);
+    }
+}
+```
+
+### Handling errors
+
+There are two issues that are likely to occur during task execution, both of them throw excpetions:
+
+1. Circular dependencies; e.g., Task "A" depends on Task "B", which depends on Task "A". In this situation, a 
+   `MJS\TopSort\CircularDependecyException` is thrown.
+2. Non-existent dependencies; e.g., Task "A" depends on Task "B", but task "B" is not defined. In this situation, a
+   `MJS\TopSort\ElementNotFoundException` is thrown.
 
 ## Change log
 
