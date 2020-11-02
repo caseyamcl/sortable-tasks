@@ -56,9 +56,7 @@ class SortableTasksIterator implements IteratorAggregate, Countable
     public static function build(SortableTask ...$tasks): self
     {
         $that = new static();
-        foreach ($tasks as $task) {
-            $that->add($task);
-        }
+        call_user_func_array([$that, 'add'], $tasks);
         return $that;
     }
 
@@ -67,22 +65,20 @@ class SortableTasksIterator implements IteratorAggregate, Countable
         $this->sorter = $sorter ?: new StringSort();
     }
 
-    /**
-     * @param SortableTask $task
-     */
-    public function add(SortableTask $task): void
+    public function add(SortableTask ...$tasks)
     {
-        $taskName = get_class($task);
-        $this->tasks[$taskName] = $task;
-
-        $mustRunBefore = $this->realize($task::mustRunBefore());
-        if (! empty($mustRunBefore)) {
-            foreach ($mustRunBefore as $depName) {
-                $this->extraDependencies[$depName][] = $taskName;
-            }
+        foreach ($tasks as $task) {
+            $this->doAdd($task);
         }
     }
 
+    /**
+     * Sort and return iterator
+     *
+     * @return iterable
+     * @throws CircularDependencyException
+     * @throws ElementNotFoundException
+     */
     public function getIterator(): iterable
     {
         $sorter = clone $this->sorter;
@@ -104,6 +100,8 @@ class SortableTasksIterator implements IteratorAggregate, Countable
     }
 
     /**
+     * Alias for self::getIterator()
+     *
      * @return ArrayIterator
      * @throws CircularDependencyException
      * @throws ElementNotFoundException
@@ -118,16 +116,21 @@ class SortableTasksIterator implements IteratorAggregate, Countable
         return count($this->tasks);
     }
 
-    /**
-     * @param iterable $items
-     * @return array
-     */
+    private function doAdd(SortableTask $task): void
+    {
+        $taskName = get_class($task);
+        $this->tasks[$taskName] = $task;
+
+        $mustRunBefore = $this->realize($task::mustRunBefore());
+        if (! empty($mustRunBefore)) {
+            foreach ($mustRunBefore as $depName) {
+                $this->extraDependencies[$depName][] = $taskName;
+            }
+        }
+    }
+
     private function realize(iterable $items): array
     {
-        if ($items instanceof Traversable) {
-            return iterator_to_array($items);
-        } else {
-            return (array) $items;
-        }
+        return $items instanceof Traversable ? iterator_to_array($items) : (array) $items;
     }
 }
