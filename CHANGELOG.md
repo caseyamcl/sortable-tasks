@@ -15,6 +15,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Fixed coding standard `phpcs.xml.dist` (should be PSR12) 
  
 ### Removed
+- Support for PHP versions < 7.4
 - Removed `void` return restriction from `SortableTaskIterator::add()` method
 - TravisCI runner config
 

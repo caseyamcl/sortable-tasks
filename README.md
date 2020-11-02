@@ -6,7 +6,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-A simple, un-opinionated abstraction library to allow for the ordering of tasks.  Features:
+A simple, un-opinionated PHP 7.4+ abstraction library to allow for the ordering of tasks.  Features:
 
 * Tasks are service class instances that can define other tasks as dependencies
 * Useful for libraries like setup routines, ensuring that HTTP middleware runs in-order, and other libraries where the ordering of tasks
