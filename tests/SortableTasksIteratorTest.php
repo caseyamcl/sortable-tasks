@@ -89,6 +89,12 @@ class SortableTasksIteratorTest extends TestCase
         $this->assertSame(0, count($sorter));
     }
 
+    public function testGetIteratorWhenIteratorIsEmpty(): void
+    {
+        $sorter = new SortableTasksIterator();
+        $this->assertEmpty(iterator_to_array($sorter));
+    }
+
     public function testDependencyLoopThrowsException(): void
     {
         $this->expectException(CircularDependencyException::class);

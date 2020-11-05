@@ -81,6 +81,10 @@ class SortableTasksIterator implements IteratorAggregate, Countable
      */
     public function getIterator(): iterable
     {
+        if (count($this->tasks) === 0) {
+            return new ArrayIterator([]);
+        }
+
         $sorter = clone $this->sorter;
 
         foreach ($this->tasks as $taskClassName => $step) {
