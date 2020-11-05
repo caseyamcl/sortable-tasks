@@ -4,6 +4,10 @@ All notable changes to `sortable-tasks` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## v0.3 - 2020-11-05
+### Removed
+- Removed return typehint from `SortableTasksIterator.php` so it can be used more flexibly
+
 ## v0.2 - 2020-11-02
 ### Added
 - Ability to add multiple tasks via `SortableTaskIterator::add()` method
@@ -19,7 +23,6 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Removed `void` return restriction from `SortableTaskIterator::add()` method
 - TravisCI runner config
 
-## v0.1.1 - 2020-10-31
 ### Fixed
 - Updated access from `private` to `protected` for `SortableTasksIterator::tasks` property to make extension via 
   inheritance easier 
