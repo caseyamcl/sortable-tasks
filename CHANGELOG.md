@@ -4,6 +4,10 @@ All notable changes to `sortable-tasks` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## v0.5 -2020-11-05
+### Added
+- `SortableTaskIterator::contains()` method
+
 ## v0.4 - 2020-11-05
 ### Fixed
 - Iterator no longer generates error when it is empty
