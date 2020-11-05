@@ -144,6 +144,18 @@ class SortableTasksIteratorTest extends TestCase
         $this->assertEquals(['A', 'D', 'C', 'B', 'H'], $this->processTasks($sorter));
     }
 
+    public function testContainsReturnsTrueWhenTaskIsInIterator(): void
+    {
+        $sorter = SortableTasksIterator::build(new TaskA());
+        $this->assertTrue($sorter->contains(TaskA::class));
+    }
+
+    public function testContainsReturnsFalseWhenTaskIsNotInIterator(): void
+    {
+        $sorter = SortableTasksIterator::build();
+        $this->assertFalse($sorter->contains(TaskA::class));
+    }
+
     /**
      * @param iterable $taskSortResult
      * @param TaskInput|null $input

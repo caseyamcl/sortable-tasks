@@ -72,6 +72,11 @@ class SortableTasksIterator implements IteratorAggregate, Countable
         }
     }
 
+    public function contains(string $taskName): bool
+    {
+        return array_key_exists($taskName, $this->tasks);
+    }
+
     /**
      * Sort and return iterator
      *
