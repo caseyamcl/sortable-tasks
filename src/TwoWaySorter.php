@@ -73,6 +73,11 @@ class TwoWaySorter implements IteratorAggregate, Countable
         }
     }
 
+    public function contains(string $task): bool
+    {
+        return array_key_exists($task, $this->tasks);
+    }
+
     /**
      * Sort items and return iterator
      *

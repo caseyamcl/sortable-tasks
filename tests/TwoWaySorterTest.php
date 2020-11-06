@@ -63,4 +63,18 @@ class TwoWaySorterTest extends TestCase
         $sorter = new TwoWaySorter();
         $this->assertSame(0, $sorter->count());
     }
+
+    public function testContainsReturnsTrueForExistentValue(): void
+    {
+        $sorter = new TwoWaySorter();
+        $sorter->add('a');
+        $this->assertTrue($sorter->contains('a'));
+    }
+
+    public function testContainsReturnsFalseForNonExistentValue(): void
+    {
+        $sorter = new TwoWaySorter();
+        $sorter->add('a');
+        $this->assertFalse($sorter->contains('b'));
+    }
 }

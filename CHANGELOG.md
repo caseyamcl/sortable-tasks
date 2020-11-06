@@ -4,6 +4,13 @@ All notable changes to `sortable-tasks` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## UNRELEASED
+### Added
+- New `TwoWaySorter.php` class for sorting strings that have dependencies and constraints
+
+### Changed
+- Refactored `SortableTasksIterator` to use `TwoWaySorter.php`
+
 ## v0.5 -2020-11-05
 ### Added
 - `SortableTaskIterator::contains()` method

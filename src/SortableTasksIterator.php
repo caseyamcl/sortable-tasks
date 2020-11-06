@@ -35,17 +35,8 @@ use Traversable;
  */
 class SortableTasksIterator implements IteratorAggregate, Countable
 {
-    private ?TopSortInterface $sorter;
-
-    /**
-     * @var array|SortableTask[]
-     */
-    protected array $tasks = [];
-
-    /**
-     * @var array|array[]  Each sub-array is an array of strings
-     */
-    private array $extraDependencies = [];
+    private TwoWaySorter $sorter;
+    private array $classMap = [];
 
     /**
      * Build immediately from tasks and use the default StringSort library
@@ -62,7 +53,7 @@ class SortableTasksIterator implements IteratorAggregate, Countable
 
     public function __construct(TopSortInterface $sorter = null)
     {
-        $this->sorter = $sorter ?: new StringSort();
+        $this->sorter = new TwoWaySorter($sorter ?: new StringSort());
     }
 
     public function add(SortableTask ...$tasks)
@@ -74,7 +65,7 @@ class SortableTasksIterator implements IteratorAggregate, Countable
 
     public function contains(string $taskName): bool
     {
-        return array_key_exists($taskName, $this->tasks);
+        return $this->sorter->contains($taskName);
     }
 
     /**
@@ -86,25 +77,8 @@ class SortableTasksIterator implements IteratorAggregate, Countable
      */
     public function getIterator(): iterable
     {
-        if (count($this->tasks) === 0) {
-            return new ArrayIterator([]);
-        }
-
-        $sorter = clone $this->sorter;
-
-        foreach ($this->tasks as $taskClassName => $step) {
-            $dependencies = $this->realize($step::dependsOn());
-
-            // fancy logic here...
-            if (isset($this->extraDependencies[$taskClassName])) {
-                $dependencies = array_merge($dependencies, $this->extraDependencies[$taskClassName]);
-            }
-
-            $sorter->add($taskClassName, $dependencies);
-        }
-
-        foreach ($sorter->sort() as $taskName) {
-            yield $taskName => $this->tasks[$taskName];
+        foreach ($this->sorter->sort() as $taskName) {
+            yield $taskName => $this->classMap[$taskName];
         }
     }
 
@@ -122,20 +96,15 @@ class SortableTasksIterator implements IteratorAggregate, Countable
 
     public function count(): int
     {
-        return count($this->tasks);
+        return count($this->sorter);
     }
 
     private function doAdd(SortableTask $task): void
     {
         $taskName = get_class($task);
-        $this->tasks[$taskName] = $task;
 
-        $mustRunBefore = $this->realize($task::mustRunBefore());
-        if (! empty($mustRunBefore)) {
-            foreach ($mustRunBefore as $depName) {
-                $this->extraDependencies[$depName][] = $taskName;
-            }
-        }
+        $this->classMap[$taskName] = $task;
+        $this->sorter->add($taskName, $this->realize($task::dependsOn()), $this->realize($task::mustRunBefore()));
     }
 
     private function realize(iterable $items): array
