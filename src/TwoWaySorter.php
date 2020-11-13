@@ -81,21 +81,50 @@ class TwoWaySorter implements IteratorAggregate, Countable
     /**
      * Sort items and return iterator
      *
+     * @param string|null ...$mustRunFirst
      * @return ArrayIterator
-     * @throws ElementNotFoundException
      * @throws CircularDependencyException
+     * @throws ElementNotFoundException
      */
-    public function getIterator(): ArrayIterator
+    public function getIterator(?string ...$mustRunFirst): ArrayIterator
     {
+        $extraDependencies = $this->extraDependencies;
+
         if (count($this->tasks) === 0) {
             return new ArrayIterator([]);
+        }
+
+        if (! empty($mustRunFirst)) {
+            $allDependencies = array_keys($this->tasks);
+
+            foreach ($mustRunFirst as $mrf) {
+                if (! array_key_exists($mrf, $this->tasks)) {
+                    throw new ElementNotFoundException(
+                        'Element not found: ' . $mrf,
+                        0,
+                        null,
+                        '',
+                        ''
+                    );
+                }
+
+                // Remove the element...
+                array_splice(
+                    $allDependencies,
+                    array_search($mrf, $allDependencies),
+                    1
+                );
+
+                //...and re-add all of the items as dependencies in the local $extraDependencies array
+                // TODO: LEFT OFF HERE
+            }
         }
 
         $sorter = clone $this->sorter;
 
         foreach ($this->tasks as $item => $dependencies) {
             // fancy logic here...
-            if (isset($this->extraDependencies[$item])) {
+            if (isset($extraDependencies[$item])) {
                 $dependencies = array_merge($dependencies, $this->extraDependencies[$item]);
             }
 
@@ -108,13 +137,12 @@ class TwoWaySorter implements IteratorAggregate, Countable
     /**
      * Alias for self::getIterator()
      *
+     * @param string ...$mustRunFirst
      * @return ArrayIterator
-     * @throws CircularDependencyException
-     * @throws ElementNotFoundException
      */
-    public function sort(): ArrayIterator
+    public function sort(string ...$mustRunFirst): ArrayIterator
     {
-        return $this->getIterator();
+        return call_user_func_array([$this, 'getIterator'], $mustRunFirst);
     }
 
     /**

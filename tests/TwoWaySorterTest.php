@@ -77,4 +77,17 @@ class TwoWaySorterTest extends TestCase
         $sorter->add('a');
         $this->assertFalse($sorter->contains('b'));
     }
+
+    public function testMustRunFirst(): void
+    {
+        $sorter = new TwoWaySorter();
+        $sorter->add('a', ['b', 'c', 'd'], ['e']);
+        $sorter->add('b', ['c'], ['d']);
+        $sorter->add('c');
+        $sorter->add('d');
+        $sorter->add('e');
+        $sorter->add('f', ['d']);
+        $result = $sorter->sort('f');
+        $this->assertEquals(['f','c','b','d','a','e'], $result->getArrayCopy());
+    }
 }
