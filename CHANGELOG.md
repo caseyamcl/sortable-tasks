@@ -4,6 +4,10 @@ All notable changes to `sortable-tasks` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## v0.6.1 - 2021-03-02
+### Added
+- Support for `marcj/topsort` version 2.0 (which works on PHP 8)
+
 ## v0.6 - 2020-11-06
 ### Added
 - New `TwoWaySorter.php` class for sorting strings that have dependencies and constraints
